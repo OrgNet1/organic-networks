@@ -35,7 +35,7 @@ We welcome developers, cryptographers, designers, and privacy advocates.
 ## 💳 Support the Mission
 Donations help us stay independent and user-aligned.
 
-Yoroi/Cardano Wallet: `addr1q8g8kjt...7f5`
+Yoroi/Cardano Wallet: ``
 
 ## 🌍 Web3 Domain
 Visit: [`organicnetworks.nft`](https://gateway.unstoppabledomains.com/ipfs/organicnetworks.nft)
