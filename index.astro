@@ -1,0 +1,554 @@
+---
+import Navbar from '../components/Navbar.astro';
+import VaultForm from '../components/VaultForm.astro';
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Organic Networks</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+
+  .page-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  text-align: center;
+  }
+
+.page-content1 {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2.5rem 1rem;
+  text-align: center;
+  
+}
+    body {
+      margin: 5;
+      font-family: 'Inter', sans-serif;
+      background:rgb(30, 47, 26);
+      color:rgb(255, 244, 215);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+      perspective: 800px;
+    }
+
+    /* Updated styles for animation */
+    .intro-container {
+      position: relative;
+      height: 33vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1rem;
+      z-index: 2;
+      flex-direction: column;
+    }
+
+    .scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #scene1,
+    #scene2 {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 1s ease;
+    }
+
+    #scene1 {
+  background: radial-gradient(#1a1a1a, #000000);
+  z-index: 1;
+  flex-direction: column;
+  transition: opacity 1s ease; /* <-- Add this */
+}
+
+    #scene2 {
+      display: none;
+      flex-direction: column;
+      background: linear-gradient(to top, #a4e5b2, #87ceeb);
+      z-index: 0;
+    }
+
+    #scene2.visible {
+      display: flex;
+      opacity: 1;
+    }
+
+    .character {
+      width: 50px;
+      height: 50px;
+      background: #ccc;
+      border-radius: 12px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .medallion {
+      width: 40px;
+      height: 40px;
+      background: #003300;
+      color: #4ade80;
+      font-weight: bold;
+      font-family: monospace;
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #0f0;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #0f0;
+      animation: pulseGlow 2s infinite ease-in-out;
+      cursor: grab;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 8px #0f0;
+      }
+      50% {
+        box-shadow: 0 0 20px #0f0;
+      }
+    }
+
+.door {
+  width: 50px;
+  height: 100px;
+  background: #333;
+  margin-left: 20px;
+  cursor: pointer;
+  border: 2px solid #555;
+  box-shadow: 0 0 10px #444;
+  transition: transform 1s ease, box-shadow 0.3s ease;
+  transform-origin: left center;
+}
+
+.door.drag-over {
+  box-shadow: 0 0 20px #4ade80;
+  border-color: #4ade80;
+}
+
+.door.open {
+  transform: rotateY(-100deg);
+}
+
+    
+
+    .drag-instruction {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #ccc;
+      font-style: italic;
+    }
+
+    .fade-text {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .left-text,
+    .right-text {
+      opacity: 0;
+      animation: fadeInText 1s ease-in-out forwards;
+    }
+
+    .left-text {
+      animation-delay: 0.5s;
+      transform: translateX(-30px);
+    }
+
+    .right-text {
+      animation-delay: 0.5s;
+      transform: translateX(30px);
+    }
+
+    @keyframes fadeInText {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .doors {
+      display: flex;
+      justify-content: space-around;
+      width: 80%;
+      margin-top: 2rem;
+    }
+
+    .wooden-door {
+      width: 80px;
+      height: 140px;
+      background: #8b5e3c;
+      border: 2px solid #6b4226;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-radius: 6px;
+    }
+
+    .sign {
+      position: absolute;
+      top: -30px;
+      background: #deb887;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    /* Other styles... */
+  </style>
+</head>
+
+ <Navbar />
+
+<div class="page-content">
+    <header>
+      <h1>Organic Networks</h1>
+      <h2 class="subheading">The Public Union</h2>
+      <p>Privacy-first. Quantum-resistant. Individually owned data vaults.</p>
+    </header>
+
+    
+
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+
+ 
+
+  <!-- 🚪 Interactive Animation -->
+  <div class="intro-container">
+    <div class="scene">
+      <div id="scene1">
+        <div class="character">
+          <div class="medallion" id="medallion" draggable="true">ON</div>
+        </div>
+        <div class="door" id="door"></div>
+        <p class="drag-instruction">Drag the medallion onto the door to enter</p>
+      </div>
+      <div id="scene2">
+        <div class="fade-text">
+          <span class="left-text">Organic</span>&nbsp;
+          <span class="right-text">Networks</span>
+        </div>
+        <div class="doors">
+          <div class="wooden-door"><div class="sign">Public</div></div>
+          <div class="wooden-door"><div class="sign">Personal</div></div>
+          <div class="wooden-door"><div class="sign">Private</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const medallion = document.getElementById('medallion');
+    const door = document.getElementById('door');
+    const scene1 = document.getElementById('scene1');
+    const scene2 = document.getElementById('scene2');
+
+    medallion.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', 'medallion');
+    });
+
+    door.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      door.classList.add('drag-over');
+    });
+
+    door.addEventListener('dragleave', () => {
+      door.classList.remove('drag-over');
+    });
+
+    door.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const data = e.dataTransfer.getData('text/plain');
+      if (data === 'medallion') {
+        door.classList.remove('drag-over');
+
+        // 🚪 Animate door swing
+        door.classList.add('open');
+
+        // ⏳ After animation, fade to scene 2
+        setTimeout(() => {
+          scene1.style.opacity = '0';
+          setTimeout(() => {
+            scene1.style.display = 'none';
+            scene2.classList.add('visible');
+          }, 1000);
+        }, 1000); // Wait for door swing
+      }
+    });
+  });
+  </script>
+
+</div>
+
+<div class="page-content">
+
+<section class="section">
+      <h2 class="highlight">Switched ON.</h2>
+      <p>
+        Organic Networks is a decentralized protocol for private, NFT-secured data vaults.
+        Your data. Your rules. Share it, sell it, or store it—on your terms.
+      </p>
+      <p>Designed for privacy, sovereignty, and ethical digital identity.</p>
+
+<div class="page-content">
+    <header>
+
+      <div class="cta-box" id="contact">
+        <h3>Request the White Paper</h3>
+        <VaultForm />
+      </div>
+
+
+      <div class="page-content1">
+    </section>
+<section class="section mission" id="mission">
+      <h2 class="highlight">Our Philosophy</h2>
+      <p>
+        In a world of uncertainty, blockchain provides the only means of certainty.
+        It offers individuals control over their own path...
+      </p>
+      <p>
+        Our long-term goal: allow people to live and act freely through digital personas that they own.
+        Data vaults are encrypted, soul-bound NFTs protect identity, and DAO governance ensures a voice for all.
+      </p>
+    </section>
+
+    <div/>
+     <div class="page-content1">
+
+
+    <section class="section">
+      <h2 class="highlight">What We're Building</h2>
+      <p>
+        Organic Networks proposes a Public Union — a Private data vault where the individual decides who can access their digital identity and a DAO framework aimed at supporting individuals to decide how the system works; raising matters, voting on issues. One person, One vote.
+      </p>
+    </section>
+
+<div/>
+ <div class="page-content">
+
+
+    <section class="section">
+      <h2 class="highlight">Ethics & Impact</h2>
+      <p>
+        <li>Safeguarding personal freedom and autonomy</li>
+        <li>Reversing exploitative Web2 data practices</li>
+        <li>Local trade, ethical marketing, and user wellbeing</li>
+        <li>Limiting data harvesting tactics</li>
+        <li>Safer content aimed at reducing child exploitation</li>
+        <li>Blocking harmful manipulation and extremism</li>
+
+
+      </ul>
+    </section>
+
+</div>
+ <div class="page-content">
+
+
+    <section class="section domain">
+      🌐 Web3 Domain:
+      <a href="https://gateway.unstoppabledomains.com/ipfs/organicnetworks.nft" target="_blank" rel="noopener noreferrer">organicnetworks.nft</a>
+    </section>
+
+</div>
+ <div class="page-content">
+
+    <section class="section roadmap">
+      <h3>Roadmap</h3>
+      <ul style="list-style: none; padding-left: 0;">
+        <li><strong>Q3 2025:</strong> MVP Launch + Vault Access System</li>
+        <li><strong>Q4 2025:</strong> Social Recovery Protocol + NFT Updates</li>
+        <li><strong>Q1 2026:</strong> Governance Launch + DAO Onboarding</li>
+        <li><strong>Q2 2026:</strong> zkStorage/FHE Integration Pilots</li>
+        <li><strong>Late 2026:</strong> Privacy-first Marketing Ecosystem Rollout</li>
+      </ul>
+    </section>
+
+<div/>
+ <div class="page-content1">
+
+    <section class="section support" id="support">
+      <h3 class="highlight">Support the Mission</h3>
+      <p>If you'd like to support Organic Networks, donations are welcome:</p>
+      <p>💳 Wallet: <code>addr1q8g8kjt...7f5</code></p>
+    </section>
+
+    <div/>
+     <div class="page-content1">
+
+    <section class="section github">
+      <h3 class="highlight">Developers & Contributors</h3>
+      <p>🔗 <a href="https://github.com/OrgNet1/organic-networks" target="_blank" rel="noopener noreferrer">View on GitHub</a></p>
+    </section>
+
+    <div/>
+     <div class="page-content1">
+
+    <section class="section discord">
+      <h3 class="highlight">Join Our Community</h3>
+      <p>💬 <a href="https://discord.gg/vVMtrzxZ" target="_blank" rel="noopener noreferrer">Join us on Discord</a></p>
+    </section>
+
+    <div/>
+     <div class="page-content1">
+
+    <section class="section x-link">
+      <h3 class="highlight">Follow Us on X</h3>
+      <p>🐦 <a href="https://x.com/Org_Networks" target="_blank" rel="noopener noreferrer">@Org_Networks</a></p>
+    </section>
+
+<div/>
+ <div class="page-content1">
+
+    <section class="section faq" id="faq">
+      <h3 class="highlight">FAQ</h3>
+      <p><strong>Is my data stored on-chain?</strong><br />No, data is encrypted on IPFS/Arweave. Only access control is on-chain.</p>
+      <p><strong>Can I revoke access?</strong><br />Yes, through the Vault Dashboard.</p>
+      <p><strong>Is it free?</strong><br />Basic vaults are free. Monetization is ethical and opt-in.</p>
+    </section>
+
+    <div/>
+
+    <footer>
+      &copy; 2025 Organic Networks. All rights reserved.
+      <div class="social-icons">
+        <a href="https://x.com/Org_Networks" target="_blank" rel="noopener noreferrer">X</a> |
+        <a href="https://discord.gg/2pHY3Xx7" target="_blank" rel="noopener noreferrer">Discord</a> |
+        <a href="https://t.me/Organic_Networks" target="_blank" rel="noopener noreferrer">Telegram</a> |
+        <a href="https://signal.group/#p=OrganicNetworks.01" target="_blank" rel="noopener noreferrer">Signal</a>
+      </div>
+    </footer>
+      
+    <!-- Three.js Background Animation -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+    <script>
+      (() => {
+        const canvas = document.getElementById('backgroundCanvas');
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x0b0c10, 0);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 40;
+        const ambientLight = new THREE.AmbientLight(0x4ade80, 0.5);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0x4ade80, 1);
+        pointLight.position.set(25, 25, 25);
+        scene.add(pointLight);
+
+        const helixRadius = 5;
+        const helixHeight = 30;
+        const turns = 10;
+        const pointsPerTurn = 50;
+        const totalPoints = turns * pointsPerTurn;
+
+        const strandMaterial = new THREE.LineBasicMaterial({ color: 0x4ade80 });
+        const basePairMaterial = new THREE.MeshBasicMaterial({ color: 0x60fcbf });
+
+        const strand1Points = [];
+        const strand2Points = [];
+
+        for (let i = 0; i <= totalPoints; i++) {
+          const t = (i / pointsPerTurn) * Math.PI * 2;
+          const y = (i / totalPoints) * helixHeight - helixHeight / 2;
+          const x1 = helixRadius * Math.cos(t);
+          const z1 = helixRadius * Math.sin(t);
+          const x2 = helixRadius * Math.cos(t + Math.PI);
+          const z2 = helixRadius * Math.sin(t + Math.PI);
+          strand1Points.push(new THREE.Vector3(x1, y, z1));
+          strand2Points.push(new THREE.Vector3(x2, y, z2));
+          if (i % 5 === 0) {
+            const midX = (x1 + x2) / 2;
+            const midZ = (z1 + z2) / 2;
+            const geometry = new THREE.SphereGeometry(0.3, 8, 8);
+            const basePair = new THREE.Mesh(geometry, basePairMaterial);
+            basePair.position.set(midX, y, midZ);
+            scene.add(basePair);
+          }
+        }
+
+        const strand1 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(strand1Points), strandMaterial);
+        const strand2 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(strand2Points), strandMaterial);
+        scene.add(strand1, strand2);
+
+        const animate = () => {
+          requestAnimationFrame(animate);
+          scene.rotation.y += 0.005;
+          scene.rotation.x = Math.sin(Date.now() * 0.001) * 0.05;
+          renderer.render(scene, camera);
+        };
+        animate();
+
+        window.addEventListener('resize', () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      })();
+    </script>
+  </body>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const scene1 = document.getElementById('scene1');
+    const scene2 = document.getElementById('scene2');
+    const door = scene1.querySelector('.door');
+
+    door.addEventListener('click', () => {
+      // Fade out scene1
+      scene1.style.opacity = '0';
+      
+      // After fade-out, hide scene1 and reveal scene2
+      setTimeout(() => {
+        scene1.style.display = 'none';
+        scene2.classList.add('visible');
+      }, 1000);
+    });
+  });
+</script>
+</html>
+
+    <footer>
+      <p class="domain">Organic Networks is an initiative of <a href="https://organicnetworks.io" target="_blank">Interbeing.io</a></p>
+      <p class="support">Want to support us? <a href="https://opencollective.com/organic-networks" target="_blank">Become a backer</a></p>
+      <div class="social-icons">
+        <a class="github" href="https://github.com/organicnetworks" target="_blank">GitHub</a>
+        <a class="discord" href="https://discord.gg/organicnetworks" target="_blank">Discord</a>
+        <a class="x-link" href="https://x.com/organicnetworks" target="_blank">X (Twitter)</a>
+      </div>
+    </footer>
+  
+  </body>
+</html>
